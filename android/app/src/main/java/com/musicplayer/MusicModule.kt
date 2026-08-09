@@ -37,11 +37,19 @@ class MusicModule(
             val cursor = reactContext.contentResolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 projection,
-                selection,
+                null,
                 null,
                 sortOrder
             )
+android.util.Log.d(
+    "MusicModule",
+    "Querying MediaStore"
+)
 
+android.util.Log.d(
+    "MusicModule",
+    "Cursor count: ${cursor?.count}"
+)
             cursor?.use {
                 val idColumn =
                     it.getColumnIndexOrThrow(
@@ -69,7 +77,10 @@ class MusicModule(
                     )
 
                 while (it.moveToNext()) {
-
+android.util.Log.d(
+    "MusicModule",
+    "Found song: ${it.getString(titleColumn)}"
+)
                     val id = it.getLong(idColumn)
                     val title = it.getString(titleColumn)
                     val artist = it.getString(artistColumn)

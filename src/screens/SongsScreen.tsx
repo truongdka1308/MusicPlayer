@@ -1,12 +1,18 @@
 import React, {useEffect, useState} from 'react';
-
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
+
+import {
+  PERMISSIONS,
+  RESULTS,
+  request,
+} from 'react-native-permissions';
 
 import {getSongs} from '../services/MusicService';
 
@@ -28,17 +34,52 @@ const SongsScreen = () => {
     loadSongs();
   }, []);
 
+  const requestMusicPermission = async () => {
+    if (Platform.OS !== 'android') {
+      return true;
+    }
+
+    const permission =
+      Platform.Version >= 33
+        ? PERMISSIONS.ANDROID.READ_MEDIA_AUDIO
+        : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
+
+    const result = await request(permission);
+
+    console.log('Music permission:', result);
+
+    return result === RESULTS.GRANTED;
+  };
+
   const loadSongs = async () => {
     try {
       setLoading(true);
+      setError('');
+
+      const hasPermission =
+        await requestMusicPermission();
+
+      if (!hasPermission) {
+        setError(
+          'Ứng dụng chưa được cấp quyền đọc nhạc.',
+        );
+        return;
+      }
 
       const result = await getSongs();
 
+      console.log('SONGS:', result);
+
       setSongs(result);
     } catch (error) {
-      console.error(error);
+      console.error(
+        'LOAD SONG ERROR:',
+        error,
+      );
 
-      setError('Không thể đọc danh sách nhạc');
+      setError(
+        'Không thể đọc danh sách nhạc.',
+      );
     } finally {
       setLoading(false);
     }
@@ -118,6 +159,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#121212',
+    padding: 20,
   },
 
   text: {
@@ -127,6 +169,7 @@ const styles = StyleSheet.create({
 
   error: {
     color: '#ff5555',
+    textAlign: 'center',
   },
 
   header: {
