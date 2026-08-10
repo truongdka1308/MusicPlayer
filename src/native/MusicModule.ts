@@ -1,16 +1,9 @@
 import {NativeModules} from 'react-native';
 
-export type NativeSong = {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  duration: number;
-  uri: string;
-};
+import {Song} from '../types/Song';
 
 type MusicModuleType = {
-  getSongs(): Promise<NativeSong[]>;
+  getSongs(): Promise<Song[]>;
 };
 
 const {MusicModule} = NativeModules as {

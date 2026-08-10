@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,25 +7,19 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-
+import { TouchableOpacity } from 'react-native';
+import { playSong } from '../services/PlayerService';
 import {
   PERMISSIONS,
   RESULTS,
   request,
 } from 'react-native-permissions';
 
-import {getSongs} from '../services/MusicService';
-
-type Song = {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  duration: number;
-  uri: string;
-};
-
+import { getSongs } from '../services/MusicService';
+import { Song } from '../types/Song';
+import { useNavigation } from '@react-navigation/native';
 const SongsScreen = () => {
+  const navigation = useNavigation();
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -119,8 +113,15 @@ const SongsScreen = () => {
       <FlatList
         data={songs}
         keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <View style={styles.song}>
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.song}
+            onPress={async () => {
+              await playSong(item);
+
+              navigation.navigate('Player' as never);
+            }}
+          >
             <View style={styles.album}>
               <Text style={styles.musicIcon}>
                 ♫
@@ -140,7 +141,8 @@ const SongsScreen = () => {
                 {item.artist || 'Unknown artist'}
               </Text>
             </View>
-          </View>
+          </TouchableOpacity>
+
         )}
       />
     </View>
