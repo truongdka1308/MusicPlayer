@@ -16,8 +16,11 @@ import TrackPlayer, {
 import {Song} from '../types/Song';
 import {
   getCurrentSong,
+  subscribeToSong,
   pauseSong,
   resumeSong,
+  playNext,
+  playPrevious
 } from '../services/PlayerService';
 
 const PlayerScreen = () => {
@@ -27,12 +30,20 @@ const PlayerScreen = () => {
   const isPlaying = useIsPlaying();
 
   useEffect(() => {
-    const currentSong = getCurrentSong();
+  const currentSong = getCurrentSong();
 
-    if (currentSong) {
-      setSong(currentSong);
-    }
-  }, []);
+  if (currentSong) {
+    setSong(currentSong);
+  }
+
+  const unsubscribe = subscribeToSong(
+    updatedSong => {
+      setSong(updatedSong);
+    },
+  );
+
+  return unsubscribe;
+}, []);
 
   const togglePlay = async () => {
   if (isPlaying) {
@@ -117,7 +128,7 @@ const PlayerScreen = () => {
       {/* Controls */}
       <View style={styles.controls}>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={playPrevious}>
           <Text style={styles.control}>
             ⏮
           </Text>
@@ -133,7 +144,7 @@ const PlayerScreen = () => {
 
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={playNext}>
           <Text style={styles.control}>
             ⏭
           </Text>
