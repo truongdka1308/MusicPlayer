@@ -7,7 +7,8 @@ import PlayerScreen from './src/screens/PlayerScreen';
 import SongsScreen from './src/screens/SongsScreen';
 import FavoritesScreen from './src/screens/FavoritesScreen';
 import PlaylistsScreen from './src/screens/PlaylistsScreen';
-
+import {useEffect} from 'react';
+import {setupPlayer} from './src/player/setupPlayer';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -39,6 +40,9 @@ const MainTabs = () => {
 };
 
 function App(): React.JSX.Element {
+   useEffect(() => {
+    setupPlayer();
+  }, []);
   return (
     <NavigationContainer>
       <Stack.Navigator
