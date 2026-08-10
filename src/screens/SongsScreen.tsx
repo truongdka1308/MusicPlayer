@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import { TouchableOpacity } from 'react-native';
-import { playSong } from '../services/PlayerService';
+import { playSong,  setPlaylist } from '../services/PlayerService';
 import {
   PERMISSIONS,
   RESULTS,
@@ -65,6 +65,7 @@ const SongsScreen = () => {
       console.log('SONGS:', result);
 
       setSongs(result);
+      setPlaylist(result);
     } catch (error) {
       console.error(
         'LOAD SONG ERROR:',
@@ -113,11 +114,11 @@ const SongsScreen = () => {
       <FlatList
         data={songs}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => (
+        renderItem={({ item,index }) => (
           <TouchableOpacity
             style={styles.song}
             onPress={async () => {
-              await playSong(item);
+              await playSong(item,index);
 
               navigation.navigate('Player' as never);
             }}
